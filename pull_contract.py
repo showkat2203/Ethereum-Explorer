@@ -67,68 +67,70 @@ with open('existing_source.txt') as f:
     	contract_list.append(line)
     	contract_cnt += 1
 	
-# cur_block = w3.eth.getBlock('latest')
-cur_block = getBlockNumber()
 
-cur_block = int(cur_block, 16)
-
-cur_block = getBlockByNumber(cur_block)
-
-prev_block = cur_block["number"]
-print(prev_block)
-prev_block = int(prev_block, 16)
-print(prev_block)
-
-print("Start Block ", prev_block)
-
-# prev_block = cur_block.json()['result']["number"] - 1
-
-# print("Second ", cur_block['transactions'])
-
-
-found = 0
-
-import os
-if not os.path.exists('solidity_source'):
-    os.makedirs('solidity_source')
-
-while contract_cnt < 200:
-	for tx in cur_block['transactions']:
-		tx_ad = tx['to']
-		if( tx_ad in contract_list ):
-			continue
-		contract = getSourceCode(tx_ad)
-
-		if( contract == "NotFound"):
-			continue
-
-		if not (contract[0].get('SourceCode') is None):
-			# print("Tx: ", tx_ad, "To ", retobj['to'])
-			my_code = contract[0]['SourceCode']
-			# print(type(my_code))
-			if(len(my_code) > 200):
-				contract_list.append(tx_ad)
-				# found = 1
-				contract_cnt += 1
-				print("Contract Count: ", contract_cnt)
-				with open(os.path.join('/home/sonnet/Desktop/custom_etherscan/solidity_source', tx_ad + ".sol"), "w") as text_file:
-					lines = my_code.splitlines()
-					for line in lines:
-						text_file.write(line)
-						# break		
-		if(contract_cnt > 200):
-		break
-
-	# if( found == 1):
-	# 	break
-
-	# cur_block = w3.eth.getBlock(prev_block)
-	cur_block = getBlockByNumber(prev_block)
-	prev_block -= 1
-
-
-with open('/home/sonnet/Desktop/custom_etherscan/existing_source.txt', "w") as text_file:
+with open('existing_source.txt', "w") as out_text_file:
 	for line in contract_list:
-		text_file.write(line + "\n")
+		out_text_file.write(line + "\n")
 
-print("End Block ", prev_block)
+	# cur_block = w3.eth.getBlock('latest')
+	cur_block = getBlockNumber()
+
+	cur_block = int(cur_block, 16)
+
+	cur_block = getBlockByNumber(cur_block)
+
+	prev_block = cur_block["number"]
+	print(prev_block)
+	prev_block = int(prev_block, 16)
+	print(prev_block)
+
+	print("Start Block ", prev_block)
+
+	# prev_block = cur_block.json()['result']["number"] - 1
+
+	# print("Second ", cur_block['transactions'])
+
+
+	found = 0
+
+	import os
+	if not os.path.exists('solidity_source'):
+	    os.makedirs('solidity_source')
+
+	while contract_cnt < 200:
+		for tx in cur_block['transactions']:
+			tx_ad = tx['to']
+			if( tx_ad in contract_list ):
+				continue
+			contract = getSourceCode(tx_ad)
+
+			if( contract == "NotFound"):
+				continue
+
+			if not (contract[0].get('SourceCode') is None):
+				# print("Tx: ", tx_ad, "To ", retobj['to'])
+				my_code = contract[0]['SourceCode']
+				# print(type(my_code))
+				if(len(my_code) > 200):
+					contract_list.append(tx_ad)
+					
+					contract_cnt += 1
+					print("Contract Count: ", contract_cnt)
+					out_text_file.write(tx_ad + "\n")
+
+					with open(os.path.join('/home/sonnet/Desktop/custom_etherscan/solidity_source', tx_ad + ".sol"), "w") as text_file:
+						lines = my_code.splitlines()
+						for line in lines:
+							text_file.write(line)
+							# break		
+			if(contract_cnt > 200):
+				break
+
+		# if( found == 1):
+		# 	break
+
+		# cur_block = w3.eth.getBlock(prev_block)
+		cur_block = getBlockByNumber(prev_block)
+		prev_block -= 1
+
+	print("End Block ", prev_block)
