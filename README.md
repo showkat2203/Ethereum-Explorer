@@ -3,6 +3,9 @@
 We are using Ethereum ETL to export data from Ethereum Blockchain. 
 Repo Link: https://github.com/blockchain-etl/ethereum-etl. 
 
+While exporting data from Ethereum, the tool could export only blocks, transactions, receipts, logs and contracts information for the block range 0~02599999.
+For the block range, 2600000 ~ 4100000, it could export other data too, such as tokens, token_transfers, traces etc. 
+
 This tool helps to export data as below format from Ethereum. 
 
 
